@@ -5,34 +5,17 @@ exports.utils = void 0;
 function hello() {
     console.log("Hello, world!");
 }
+// 1. ฟังก์ชันบวกเลขพื้นฐาน (Unit function)
 function add(a, b) {
     return a + b;
 }
-// 1. ฟังก์ชันผู้ส่ง (Sender): เตรียมและส่งพัสดุ
-function sendPackage(sender, receiver, item) {
-    return {
-        sender,
-        receiver,
-        item,
-        status: "shipped"
-    };
-}
-// 2. ฟังก์ชันผู้รับ (Receiver): รับพัสดุและตรวจสอบการจัดส่ง
-function receivePackage(pkg) {
-    if (pkg && pkg.status === "shipped") {
-        return Object.assign(Object.assign({}, pkg), { status: "delivered", receivedBy: pkg.receiver });
-    }
-    return Object.assign(Object.assign({}, pkg), { status: "failed" });
-}
-// 3. ฟังก์ชันการทำงานร่วมกัน (Function ซ้อน Function / Delivery Pipeline)
-function deliveryProcess(sender, receiver, item) {
-    const pkg = sendPackage(sender, receiver, item); // ผู้ส่งเริ่มส่ง
-    return receivePackage(pkg); // ส่งต่อไปให้ผู้รับ
+// 2. ฟังก์ชันซ้อนฟังก์ชัน (Integration: นำ add มาทำงานร่วมกันต่อเนื่อง)
+function addThree(a, b, c) {
+    const step1 = add(a, b); // ขั้นแรก: ผู้ส่ง (คำนวณคู่แรก)
+    return add(step1, c); // ขั้นสอง: ผู้รับ (นำผลลัพธ์มาคำนวณต่อ)
 }
 exports.utils = {
     hello,
     add,
-    sendPackage,
-    receivePackage,
-    deliveryProcess
+    addThree
 };

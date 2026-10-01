@@ -13,7 +13,7 @@ const test_suite = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log("--- Running Unit Tests ---");
     // Unit test case 1:
     if (utils.add(2, 2) === 4) {
-        console.log("Unit test case 1 passed");
+        console.log("Unit test case 1 passed: add(2, 2) === 4");
     }
     else {
         console.error("Unit test case 1 failed: if(utils.add(2, 2) === 4)");
@@ -21,30 +21,27 @@ const test_suite = () => __awaiter(void 0, void 0, void 0, function* () {
     }
     // Unit test case 2:
     if (utils.add(3, 3) === 6) {
-        console.log("Unit test case 2 passed");
+        console.log("Unit test case 2 passed: add(3, 3) === 6");
     }
     else {
         console.error("Unit test case 2 failed: if(utils.add(3, 3) === 6)");
         process.exit(1);
     }
-    console.log("\n--- Running Integration Tests (Sender & Receiver) ---");
-    // Integration test case 1: ทดสอบการทำงานร่วมกันของ sendPackage -> receivePackage
-    const delivered = utils.deliveryProcess("ShopA", "CustomerB", "Book");
-    if (delivered.status === "delivered" && delivered.receivedBy === "CustomerB") {
-        console.log("Integration test 1 passed: Sender & Receiver worked together successfully!");
+    console.log("\n--- Running Integration Tests (Function ซ้อน Function) ---");
+    // Integration test case 1: ทดสอบการทำงานร่วมกันของ add ซ้อน add ผ่าน addThree
+    if (utils.addThree(1, 2, 3) === 6) {
+        console.log("Integration test 1 passed: addThree(1, 2, 3) === 6");
     }
     else {
-        console.error("Integration test 1 failed!");
+        console.error("Integration test 1 failed: addThree(1, 2, 3) !== 6");
         process.exit(1);
     }
-    // Integration test case 2: ทดสอบกรณีผิดพลาด (คนส่งไม่ได้ส่งมา แต่คนรับพยายามรับ)
-    const badPackage = { sender: "Stranger", receiver: "CustomerB", item: "Unknown", status: "pending" };
-    const failedDelivery = utils.receivePackage(badPackage);
-    if (failedDelivery.status === "failed") {
-        console.log("Integration test 2 passed: Correctly handled invalid package status!");
+    // Integration test case 2: ทดสอบการทำงานร่วมกันอีกเคส
+    if (utils.addThree(10, 20, 30) === 60) {
+        console.log("Integration test 2 passed: addThree(10, 20, 30) === 60");
     }
     else {
-        console.error("Integration test 2 failed!");
+        console.error("Integration test 2 failed: addThree(10, 20, 30) !== 60");
         process.exit(1);
     }
 });
