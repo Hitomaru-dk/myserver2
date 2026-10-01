@@ -1,17 +1,66 @@
 name: WorkFlow1
 on: [push]
-jobs:
-  job1:
-    runs-on: ubuntu-latest
 
+jobs:
+  integration-test-pass:
+    name: Integration Test (Pass - Green)
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: install node js
+    - name: Install Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '22'
 
-    - name: Run test
+    - name: Run Unit Test
       run: node dist/Test1.js
+
+    - name: Start Express Server
+      run: node dist/index.js &
+
+    - name: Wait for server
+      run: sleep 2
+
+    - name: Integration Test - Expect Pass
+      run: |
+        RESPONSE=$(curl -s http://localhost:3001/)
+        echo "Server response: $RESPONSE"
+        if [ "$RESPONSE" = "Hello, world!xxxx" ]; then
+          echo "Test Passed!"
+          exit 0
+        else
+          echo "Test Failed!"
+          exit 1
+        fi
+
+  integration-test-fail:
+    name: Integration Test (Fail - Red)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+
+    - name: Start Express Server
+      run: node dist/index.js &
+
+    - name: Wait for server
+      run: sleep 2
+
+    - name: Integration Test - Expect Fail
+      run: |
+        RESPONSE=$(curl -s http://localhost:3001/)
+        echo "Server response: $RESPONSE"
+        echo "Expecting 'Wrong Response'..."
+        if [ "$RESPONSE" = "Wrong Response" ]; then
+          exit 0
+        else
+          echo "Integration Test Failed as expected!"
+          exit 1
+        fi
