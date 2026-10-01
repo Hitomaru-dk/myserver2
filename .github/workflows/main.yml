@@ -11,4 +11,7 @@ jobs:
     - name: install node js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '22'
+
+    - name: Run test
+      run: node dist/Test1.js
