@@ -9,22 +9,43 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const utils = require('./Utils').utils;
-const unit_test = () => __awaiter(void 0, void 0, void 0, function* () {
-    //Unit test case 1:
+const test_suite = () => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("--- Running Unit Tests ---");
+    // Unit test case 1:
     if (utils.add(2, 2) === 4) {
-        console.log("Test case 1 passed");
+        console.log("Unit test case 1 passed");
     }
     else {
-        console.error("Test case 1 failed: if(utils.add(2, 2) === 4)");
+        console.error("Unit test case 1 failed: if(utils.add(2, 2) === 4)");
         process.exit(1);
     }
-    //Unit test case 2:
+    // Unit test case 2:
     if (utils.add(3, 3) === 6) {
-        console.log("Test case 2 passed");
+        console.log("Unit test case 2 passed");
     }
     else {
-        console.error("Test case 2 failed: if(utils.add(3, 3) === 6)");
+        console.error("Unit test case 2 failed: if(utils.add(3, 3) === 6)");
+        process.exit(1);
+    }
+    console.log("\n--- Running Integration Tests (Sender & Receiver) ---");
+    // Integration test case 1: ทดสอบการทำงานร่วมกันของ sendPackage -> receivePackage
+    const delivered = utils.deliveryProcess("ShopA", "CustomerB", "Book");
+    if (delivered.status === "delivered" && delivered.receivedBy === "CustomerB") {
+        console.log("Integration test 1 passed: Sender & Receiver worked together successfully!");
+    }
+    else {
+        console.error("Integration test 1 failed!");
+        process.exit(1);
+    }
+    // Integration test case 2: ทดสอบกรณีผิดพลาด (คนส่งไม่ได้ส่งมา แต่คนรับพยายามรับ)
+    const badPackage = { sender: "Stranger", receiver: "CustomerB", item: "Unknown", status: "pending" };
+    const failedDelivery = utils.receivePackage(badPackage);
+    if (failedDelivery.status === "failed") {
+        console.log("Integration test 2 passed: Correctly handled invalid package status!");
+    }
+    else {
+        console.error("Integration test 2 failed!");
         process.exit(1);
     }
 });
-unit_test();
+test_suite();
