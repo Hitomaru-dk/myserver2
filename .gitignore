@@ -1,0 +1,8 @@
+*
+!.gitignore
+!.github/
+!.github/**
+!dist/
+!dist/index.js
+!dist/Utils.js
+!dist/Test1.js
