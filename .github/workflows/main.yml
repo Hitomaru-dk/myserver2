@@ -1,9 +1,7 @@
-name: WorkFlow1
+name: main
 on: [push]
-
 jobs:
   job1:
-    name: test add
     runs-on: ubuntu-latest
 
     steps:
@@ -15,5 +13,11 @@ jobs:
       with:
         node-version: '22'
 
-    - name: Run test add
+    - name: Run test
       run: node dist/Test1.js
+      
+  job2:
+    needs: job1
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "job2"

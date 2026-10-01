@@ -1,7 +1,7 @@
 name: WorkFlow3
 on:
   workflow_run:
-    workflows: ["WorkFlow1"]
+    workflows: ["main"]
     types:
       - completed
 
