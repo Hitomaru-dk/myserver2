@@ -1,0 +1,64 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # รองรับการกดรันแบบ manual ตามสไลด์หน้า 51
+
+jobs:
+  # ==========================================
+  # 1. CI Stage: Test & Build TypeScript
+  # ==========================================
+  ci-test:
+    name: "CI: Build TypeScript & Run Tests"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Compile TypeScript
+        run: npm run build
+
+      - name: Run Automated Tests
+        run: node dist/Test1.js
+
+  # ==========================================
+  # 2. CD Stage: Build & Push Docker Image
+  # ==========================================
+  cd-deploy:
+    name: "CD: Build & Push to DockerHub"
+    needs: ci-test # ทำงานเมื่อขั้นตอน CI ผ่านเท่านั้น
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/myserver2:latest
+            ${{ secrets.DOCKER_USERNAME }}/myserver2:${{ github.sha }}

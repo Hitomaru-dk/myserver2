@@ -1,4 +1,9 @@
-*
+node_modules/
+.env
+*.pdf
+*.txt
+
+# Allow these files
 !.gitignore
 !.github/
 !.github/**
@@ -6,3 +11,19 @@
 !dist/index.js
 !dist/Utils.js
 !dist/Test1.js
+!dist/models/
+!dist/models/**
+!dist/routes/
+!dist/routes/**
+!public/
+!public/**
+!src/
+!src/**
+!package.json
+!package-lock.json
+!tsconfig.json
+!nodemon.json
+!README.md
+!Dockerfile
+!docker-compose.yml
+!.dockerignore

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Tester - myserver2</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        .status-bar {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .status-bar span {
+            display: inline-block;
+            padding: 5px 12px;
+            margin: 0 5px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .status-connected { background: #c8ffc8; color: #060; border: 1px solid #090; }
+        .status-disconnected { background: #ffc8c8; color: #900; border: 1px solid #c00; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 15px;
+        }
+
+        .method-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .method-get { background: #d4edda; color: #155724; }
+        .method-post { background: #cce5ff; color: #004085; }
+        .method-put { background: #fff3cd; color: #856404; }
+        .method-delete { background: #f8d7da; color: #721c24; }
+
+        .form-group {
+            margin-bottom: 8px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            box-sizing: border-box;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #666;
+        }
+
+        textarea { resize: vertical; min-height: 50px; }
+
+        button {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #999;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .btn-get { background: #d4edda; color: #155724; }
+        .btn-get:hover { background: #c3e6cb; }
+        .btn-post { background: #cce5ff; color: #004085; }
+        .btn-post:hover { background: #b8daff; }
+        .btn-put { background: #fff3cd; color: #856404; }
+        .btn-put:hover { background: #ffeeba; }
+        .btn-delete { background: #f8d7da; color: #721c24; }
+        .btn-delete:hover { background: #f5c6cb; }
+
+        .response-section {
+            grid-column: 1 / -1;
+        }
+
+        .response-box {
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .response-header h3 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .response-status {
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-ok { background: #d4edda; color: #155724; }
+        .status-error { background: #f8d7da; color: #721c24; }
+        .status-loading { background: #fff3cd; color: #856404; }
+
+        pre {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: Consolas, monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .items-list {
+            grid-column: 1 / -1;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        .item-info { flex: 1; }
+
+        .item-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .item-desc {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .item-price {
+            font-weight: bold;
+            color: #155724;
+            margin-right: 10px;
+        }
+
+        .item-id {
+            font-family: monospace;
+            font-size: 11px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .item-id:hover { color: #333; }
+
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <h1>API Tester</h1>
+    <p class="subtitle">myserver2 - MongoDB CRUD API Testing</p>
+
+    <div class="status-bar">
+        <span id="serverStatus" class="status-disconnected">Checking server...</span>
+        <span id="mongoStatus" class="status-disconnected">Checking MongoDB...</span>
+    </div>
+
+    <div class="grid">
+        <!-- GET All Items -->
+        <div class="card">
+            <h3><span class="method-badge method-get">GET</span> Get All Items</h3>
+            <p style="font-size:12px; color:#888; margin-bottom:8px">/api/items</p>
+            <button class="btn-get" onclick="getAllItems()">Fetch All Items</button>
+        </div>
+
+        <!-- POST Create Item -->
+        <div class="card">
+            <h3><span class="method-badge method-post">POST</span> Create Item</h3>
+            <div class="form-group">
+                <label>Name *</label>
+                <input type="text" id="createName" placeholder="e.g. Laptop">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <input type="text" id="createDesc" placeholder="e.g. MacBook Pro M3">
+            </div>
+            <div class="form-group">
+                <label>Price *</label>
+                <input type="number" id="createPrice" placeholder="e.g. 45900">
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <input type="text" id="createCategory" placeholder="e.g. electronics">
+            </div>
+            <button class="btn-post" onclick="createItem()">Create Item</button>
+        </div>
+
+        <!-- PUT Update Item -->
+        <div class="card">
+            <h3><span class="method-badge method-put">PUT</span> Update Item</h3>
+            <div class="form-group">
+                <label>Item ID *</label>
+                <input type="text" id="updateId" placeholder="Paste item _id here">
+            </div>
+            <div class="form-group">
+                <label>New Name</label>
+                <input type="text" id="updateName" placeholder="New name">
+            </div>
+            <div class="form-group">
+                <label>New Price</label>
+                <input type="number" id="updatePrice" placeholder="New price">
+            </div>
+            <button class="btn-put" onclick="updateItem()">Update Item</button>
+        </div>
+
+        <!-- DELETE Item -->
+        <div class="card">
+            <h3><span class="method-badge method-delete">DELETE</span> Delete Item</h3>
+            <div class="form-group">
+                <label>Item ID *</label>
+                <input type="text" id="deleteId" placeholder="Paste item _id here">
+            </div>
+            <button class="btn-delete" onclick="deleteItem()">Delete Item</button>
+        </div>
+
+        <!-- Response Area -->
+        <div class="response-section">
+            <div class="response-box">
+                <div class="response-header">
+                    <h3>Response</h3>
+                    <span id="responseStatus" class="response-status" style="display:none;"></span>
+                </div>
+                <pre id="responseBody">Click any button to test the API...</pre>
+            </div>
+        </div>
+
+        <!-- Items List -->
+        <div class="items-list" id="itemsList"></div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        async function checkHealth() {
+            try {
+                const res = await fetch('/health');
+                const data = await res.json();
+                const serverEl = document.getElementById('serverStatus');
+                const mongoEl = document.getElementById('mongoStatus');
+                serverEl.textContent = data.server ? `Server Online (${data.server})` : 'Server Online';
+                serverEl.className = 'status-connected';
+                if (data.mongo === 'connected') {
+                    mongoEl.textContent = 'MongoDB Connected';
+                    mongoEl.className = 'status-connected';
+                } else {
+                    mongoEl.textContent = 'MongoDB Disconnected';
+                    mongoEl.className = 'status-disconnected';
+                }
+            } catch (e) {
+                document.getElementById('serverStatus').textContent = 'Server Offline';
+            }
+        }
+
+        function showResponse(data, status) {
+            const el = document.getElementById('responseBody');
+            const statusEl = document.getElementById('responseStatus');
+            el.textContent = JSON.stringify(data, null, 2);
+            statusEl.style.display = 'inline-block';
+            if (status >= 200 && status < 300) {
+                statusEl.textContent = status + ' OK';
+                statusEl.className = 'response-status status-ok';
+            } else {
+                statusEl.textContent = status + ' Error';
+                statusEl.className = 'response-status status-error';
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('responseBody').textContent = 'Loading...';
+            const s = document.getElementById('responseStatus');
+            s.textContent = 'Loading';
+            s.className = 'response-status status-loading';
+            s.style.display = 'inline-block';
+        }
+
+        function renderItems(items) {
+            const el = document.getElementById('itemsList');
+            if (!items || items.length === 0) {
+                el.innerHTML = '<p style="text-align:center; color:#888; font-size:13px;">No items found.</p>';
+                return;
+            }
+            el.innerHTML = items.map(item => `
+                <div class="item-row">
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-desc">${item.description || 'No description'} | ${item.category || 'general'}</div>
+                        <div class="item-id" onclick="navigator.clipboard.writeText('${item._id}').then(()=>alert('Copied ID!'))" title="Click to copy ID">ID: ${item._id}</div>
+                    </div>
+                    <div class="item-price">$${Number(item.price).toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+
+        async function getAllItems() {
+            showLoading();
+            try {
+                const res = await fetch(API_BASE + '/items');
+                const data = await res.json();
+                showResponse(data, res.status);
+                if (data.data) renderItems(data.data);
+            } catch (e) {
+                showResponse({ error: e.message }, 500);
+            }
+        }
+
+        async function createItem() {
+            const name = document.getElementById('createName').value;
+            const description = document.getElementById('createDesc').value;
+            const price = document.getElementById('createPrice').value;
+            const category = document.getElementById('createCategory').value;
+            if (!name || !price) { alert('Name and Price are required!'); return; }
+            showLoading();
+            try {
+                const res = await fetch(API_BASE + '/items', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description, price: Number(price), category }),
+                });
+                const data = await res.json();
+                showResponse(data, res.status);
+                if (res.ok) {
+                    document.getElementById('createName').value = '';
+                    document.getElementById('createDesc').value = '';
+                    document.getElementById('createPrice').value = '';
+                    document.getElementById('createCategory').value = '';
+                    getAllItems();
+                }
+            } catch (e) {
+                showResponse({ error: e.message }, 500);
+            }
+        }
+
+        async function updateItem() {
+            const id = document.getElementById('updateId').value;
+            const name = document.getElementById('updateName').value;
+            const price = document.getElementById('updatePrice').value;
+            if (!id) { alert('Item ID is required!'); return; }
+            const body = {};
+            if (name) body.name = name;
+            if (price) body.price = Number(price);
+            showLoading();
+            try {
+                const res = await fetch(API_BASE + '/items/' + id, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body),
+                });
+                const data = await res.json();
+                showResponse(data, res.status);
+                if (res.ok) getAllItems();
+            } catch (e) {
+                showResponse({ error: e.message }, 500);
+            }
+        }
+
+        async function deleteItem() {
+            const id = document.getElementById('deleteId').value;
+            if (!id) { alert('Item ID is required!'); return; }
+            if (!confirm('Delete this item?')) return;
+            showLoading();
+            try {
+                const res = await fetch(API_BASE + '/items/' + id, { method: 'DELETE' });
+                const data = await res.json();
+                showResponse(data, res.status);
+                if (res.ok) getAllItems();
+            } catch (e) {
+                showResponse({ error: e.message }, 500);
+            }
+        }
+
+        checkHealth();
+        setInterval(checkHealth, 10000);
+    </script>
+</body>
+</html>

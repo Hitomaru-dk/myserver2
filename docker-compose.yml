@@ -1,0 +1,33 @@
+services:
+  web1:
+    build: .
+    container_name: web-server-1
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - SERVER_NAME=Web-Server-1
+      - MONGO_URI=mongodb+srv://pangpond4343_db_user:0fcHPg4YMckctNEv@server2.di0sfol.mongodb.net/myserver2db?retryWrites=true&w=majority
+    restart: unless-stopped
+
+  web2:
+    build: .
+    container_name: web-server-2
+    ports:
+      - "3002:3001"
+    environment:
+      - PORT=3001
+      - SERVER_NAME=Web-Server-2
+      - MONGO_URI=mongodb+srv://pangpond4343_db_user:0fcHPg4YMckctNEv@server2.di0sfol.mongodb.net/myserver2db?retryWrites=true&w=majority
+    restart: unless-stopped
+
+  web3:
+    build: .
+    container_name: web-server-3
+    ports:
+      - "3003:3001"
+    environment:
+      - PORT=3001
+      - SERVER_NAME=Web-Server-3
+      - MONGO_URI=mongodb+srv://pangpond4343_db_user:0fcHPg4YMckctNEv@server2.di0sfol.mongodb.net/myserver2db?retryWrites=true&w=majority
+    restart: unless-stopped
